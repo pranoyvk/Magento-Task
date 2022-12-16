@@ -74,10 +74,10 @@ class CustomCommand extends Command
     {
         $options = [
             new InputOption(
-                self::PROFILE, // the option name
-                '-s', // the <shortcut></shortcut>
-                InputOption::VALUE_REQUIRED, // the option mode
-                'Say the file extention' // the description
+                self::PROFILE,
+                '-s',
+                InputOption::VALUE_REQUIRED,
+                'Say the file extention'
             ),
         ];
         $this->setName('customer:import');
