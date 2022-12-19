@@ -2,9 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace CustomCommand\ImportCustomerData\Console;
+namespace CustomCommand\ImportCustomerData\Model;
 
 use Magento\Framework\Exception\LocalizedException;
+use CustomCommand\ImportCustomerData\Console\ImportCustomerDataInterface;
 
 class ImportCsv implements ImportCustomerDataInterface
 {
@@ -39,31 +40,17 @@ class ImportCsv implements ImportCustomerDataInterface
     public function importData(string $path): array
     {
         if ($this->driverFile->isExists($path)) {
-            return $this->changeKey(
-                array_slice((array)$this->csv->getData($path), 1),
-                [0 => 'firstname', 1 => 'lastname', 2 => 'email']
-            );
+            $fileData = array_slice((array)$this->csv->getData($path), 1);
+            foreach ($fileData as $key => &$value) {
+                $value['firstname'] = $value[0];
+                unset($value[0]);
+                $value['lastname'] = $value[1];
+                unset($value[1]);
+                $value['email'] = $value[2];
+                unset($value[2]);
+            }
+            return $fileData;
         }
         throw new LocalizedException(__("File not Exist"));
-    }
-
-    /**
-     * Match the key to data base table
-     *
-     * @param array $arr
-     * @param array $set
-     */
-    private function changeKey($arr, $set)
-    {
-        if (is_array($arr) && is_array($set)) {
-            $newArr = $tempArr = [];
-            foreach ($arr as $key => $value) {
-                foreach ($value as $k => $v) {
-                    $tempArr[$set[$k]] = $v;
-                }
-                $newArr[$key] = $tempArr;
-            }
-            return $newArr;
-        }
     }
 }

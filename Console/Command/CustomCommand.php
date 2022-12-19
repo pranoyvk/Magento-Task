@@ -9,8 +9,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use CustomCommand\ImportCustomerData\Console\ImportJson;
-use CustomCommand\ImportCustomerData\Console\ImportCsv;
+use CustomCommand\ImportCustomerData\Model\ImportJson;
+use CustomCommand\ImportCustomerData\Model\ImportCsv;
 use Magento\Framework\Exception\LocalizedException;
 use CustomCommand\ImportCustomerData\Model\SaveCustomerData;
 

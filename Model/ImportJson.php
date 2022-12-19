@@ -2,9 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace CustomCommand\ImportCustomerData\Console;
+namespace CustomCommand\ImportCustomerData\Model;
 
 use Magento\Framework\Exception\LocalizedException;
+use CustomCommand\ImportCustomerData\Console\ImportCustomerDataInterface;
 
 class ImportJson implements ImportCustomerDataInterface
 {
@@ -34,30 +35,17 @@ class ImportJson implements ImportCustomerDataInterface
         if ($this->driverFile->isExists($path)) {
             $fileDataStr = $this->driverFile->fileOpen($path, 'r');
             $arrayConvertion = json_decode($this->driverFile->fileRead($fileDataStr, 2000000), true);
-            return (array) $this->recursiveChangeKey(
-                $arrayConvertion,
-                ['fname' => 'firstname', 'lname' => 'lastname', 'emailaddress' => 'email']
-            );
+
+            foreach ($arrayConvertion as $key => &$value) {
+                $value['firstname'] = $value['fname'];
+                unset($value['fname']);
+                $value['lastname'] = $value['lname'];
+                unset($value['lname']);
+                $value['email'] = $value['emailaddress'];
+                unset($value['emailaddress']);
+            }
+            return $arrayConvertion;
         }
         throw new LocalizedException(__("File does not exist"));
-    }
-
-    /**
-     * Match the key to data base table
-     *
-     * @param array $arr
-     * @param array $set
-     */
-    public function recursiveChangeKey($arr, $set)
-    {
-        if (is_array($arr) && is_array($set)) {
-            $newArr = [];
-            foreach ($arr as $k => $v) {
-                $key = array_key_exists($k, $set) ? $set[$k] : $k;
-                $newArr[$key] = is_array($v) ? $this->recursiveChangeKey($v, $set) : $v;
-            }
-            return $newArr;
-        }
-        return $arr;
     }
 }
